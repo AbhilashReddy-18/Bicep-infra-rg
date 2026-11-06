@@ -76,19 +76,19 @@ jobs:
 
       - name: What-If Analysis
         run: |
-         mkdir -p Artifacts
+         mkdir -p Artifact
 
           az deployment sub what-if \
             --location ${{ github.event.inputs.location }} \
             --template-file $TEMPLATE_FILE \
             --parameters $PARAM_FILE \
-            > Artifacts/whatif.txt
+            > Artifact/whatif.txt
 
       - name: Upload WhatIf Report
         uses: actions/upload-artifact@v4
         with:
           name: whatif-report
-          path: Artifacts/dwhatif.txt
+          path: Artifact/whatif.txt
 
   deploy:
 
@@ -104,6 +104,9 @@ jobs:
 
     steps:
 
+      - name: Create Artifact Directory
+        run: mkdir -p Artifact
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -118,24 +121,33 @@ jobs:
             --name $DEPLOYMENT_NAME \
             --location ${{ github.event.inputs.location }} \
             --template-file main.bicep \
-            --parameters $PARAM_FILE
+            --parameters $PARAM_FILE \
             --output json \
-            > Artifacts/deployment-output.json
+            > Artifact/deployment-output.json
 
       - name: Generate Deployment Metadata
         run: |
           echo "Deployment Name : $DEPLOYMENT_NAME" > Artifact/deployment-info.txt
           echo "Environment     : ${{ github.event.inputs.environment }}" >> Artifact/deployment-info.txt
           echo "Location        : ${{ github.event.inputs.location }}" >> Artifact/deployment-info.txt
-          echo "Parameter File  : $PARAM_FILE" >> Artifacts/deployment-info.txt
+          echo "Parameter File  : $PARAM_FILE" >> Artifact/deployment-info.txt
           echo "Build Number    : ${{ github.run_number }}" >> Artifact/deployment-info.txt
           echo "Run ID          : ${{ github.run_id }}" >> Artifact/deployment-info.txt
           echo "Commit SHA      : ${{ github.sha }}" >> Artifact/deployment-info.txt
           echo "Triggered By    : ${{ github.actor }}" >> Artifact/deployment-info.txt
           echo "Date            : $(date)" >> Artifact/deployment-info.txt
 
+          
+
+      - name: Verify Artifact
+        run: |
+         pwd
+         ls -R
+         ls -lah Artifact
+
       - name: Upload Deployment Artifacts
         uses: actions/upload-artifact@v4
         with:
             name: deployment-artifacts
-            path: Artifacts/
+            path: Artifact/
+
