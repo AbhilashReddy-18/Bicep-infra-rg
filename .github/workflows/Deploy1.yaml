@@ -76,7 +76,7 @@ jobs:
 
       - name: What-If Analysis
         run: |
-         mkdir -p whatif-reports
+         mkdir -p Artifacts
 
           az deployment sub what-if \
             --location ${{ github.event.inputs.location }} \
@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: whatif-report
-          path: whatif.txt
+          path: Artifacts/dwhatif.txt
 
   deploy:
 
@@ -119,19 +119,20 @@ jobs:
             --location ${{ github.event.inputs.location }} \
             --template-file main.bicep \
             --parameters $PARAM_FILE
-            --output json > Artifacts/deployment-output.json
+            --output json \
+            > Artifacts/deployment-output.json
 
       - name: Generate Deployment Metadata
         run: |
-          echo "Deployment Name : $DEPLOYMENT_NAME" > deployment-info.txt
-          echo "Environment     : ${{ github.event.inputs.environment }}" >> deployment-info.txt
-          echo "Location        : ${{ github.event.inputs.location }}" >> deployment-info.txt`
+          echo "Deployment Name : $DEPLOYMENT_NAME" > Artifact/deployment-info.txt
+          echo "Environment     : ${{ github.event.inputs.environment }}" >> Artifact/deployment-info.txt
+          echo "Location        : ${{ github.event.inputs.location }}" >> Artifact/deployment-info.txt
           echo "Parameter File  : $PARAM_FILE" >> Artifacts/deployment-info.txt
-          echo "Build Number    : ${{ github.run_number }}" >> deployment-info.txt
-          echo "Run ID          : ${{ github.run_id }}" >> deployment-info.txt
-          echo "Commit SHA      : ${{ github.sha }}" >> deployment-info.txt
-          echo "Triggered By    : ${{ github.actor }}" >> deployment-info.txt
-          echo "Date            : $(date)" >> deployment-info.txt
+          echo "Build Number    : ${{ github.run_number }}" >> Artifact/deployment-info.txt
+          echo "Run ID          : ${{ github.run_id }}" >> Artifact/deployment-info.txt
+          echo "Commit SHA      : ${{ github.sha }}" >> Artifact/deployment-info.txt
+          echo "Triggered By    : ${{ github.actor }}" >> Artifact/deployment-info.txt
+          echo "Date            : $(date)" >> Artifact/deployment-info.txt
 
       - name: Upload Deployment Artifacts
         uses: actions/upload-artifact@v4
