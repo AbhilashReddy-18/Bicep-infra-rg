@@ -79,6 +79,7 @@ jobs:
           mkdir -p Artifact
 
           az deployment sub what-if \
+            --name $DEPLOYMENT_NAME \
             --location ${{ github.event.inputs.location }} \
             --template-file $TEMPLATE_FILE \
             --parameters $PARAM_FILE \
