@@ -15,7 +15,7 @@ on:
       location:
         description: Azure Region
         required: true
-        type: choice    
+        type: choice
         options:
           - westus
           - eastus
@@ -76,7 +76,7 @@ jobs:
 
       - name: What-If Analysis
         run: |
-         mkdir -p Artifact
+          mkdir -p Artifact
 
           az deployment sub what-if \
             --location ${{ github.event.inputs.location }} \
@@ -104,11 +104,11 @@ jobs:
 
     steps:
 
-      - name: Create Artifact Directory
-        run: mkdir -p Artifact
-
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Create Artifact Directory
+        run: mkdir -p Artifact
 
       - name: Azure Login
         uses: azure/login@v2
@@ -137,17 +137,14 @@ jobs:
           echo "Triggered By    : ${{ github.actor }}" >> Artifact/deployment-info.txt
           echo "Date            : $(date)" >> Artifact/deployment-info.txt
 
-          
-
       - name: Verify Artifact
         run: |
-         pwd
-         ls -R
-         ls -lah Artifact
+          pwd
+          ls -R
+          ls -lah Artifact
 
       - name: Upload Deployment Artifacts
         uses: actions/upload-artifact@v4
         with:
-            name: deployment-artifacts
-            path: Artifact/
-
+          name: deployment-artifacts
+          path: Artifact/
